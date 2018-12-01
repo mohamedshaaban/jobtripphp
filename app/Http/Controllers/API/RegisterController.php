@@ -1,7 +1,4 @@
-
 <?php
-
-
 namespace App\Http\Controllers\API;
 
 
@@ -37,12 +34,11 @@ class RegisterController extends BaseController
         $validator = Validator::make($request->all(), [
 
             'name' => 'required',
-
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
 
             'password' => 'required',
 
-            'c_password' => 'required|same:password',
+            'confirmpassword' => 'required|same:password',
 
         ]);
 
@@ -68,5 +64,38 @@ class RegisterController extends BaseController
         return $this->sendResponse($success, 'User register successfully.');
 
     }
+    public function login(Request $request)
 
+    {
+
+        $validator = Validator::make($request->all(), [
+
+            'name' => 'required',
+
+            'password' => 'required',
+
+        ]);
+
+
+        if($validator->fails()){
+
+            return $this->sendError('Validation Error.', $validator->errors());       
+
+        }
+
+
+        $input = $request->all();
+
+        $input['password'] = ($input['password']);
+
+        $user = Auth::attempt(['name' => $input['name'], 'password' => $input['password']]);
+
+        $success['token'] =  Auth::user()->createToken('MyApp')->accessToken;
+
+        $success['name'] =  Auth::user()->name;
+
+
+        return json_encode(['access_token'=>Auth::user()->createToken('MyApp')->accessToken]);
+
+    }
 }

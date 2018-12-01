@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Http\Controllers\API;
 
 
@@ -34,7 +32,7 @@ class ProductController extends BaseController
         $products = Product::all();
 
 
-        return $this->sendResponse($products->toArray(), 'Products retrieved successfully.');
+        return json_encode($products);
 
     }
 
